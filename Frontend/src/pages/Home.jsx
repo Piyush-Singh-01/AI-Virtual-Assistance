@@ -282,7 +282,7 @@ function Home() {
 
   const deleteHistory = async(index)=>{
     try {
-        const res = await axios.delete(`http://localhost:8000/api/user/history/${index}`,{withCredentials:true});
+        const res = await axios.delete(`https://backend-ai-virtual-assistance.onrender.com/api/user/history/${index}`,{withCredentials:true});
         toast.success(res.data.msg);
         dispatch(setUserData(res.data.user));
     } catch (error) {
