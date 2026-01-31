@@ -41,13 +41,13 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={userData ? <Home /> : <Navigate to="/login" />}></Route>
-        <Route path='/signup' element={<SignUp/>}></Route>
-        <Route path='/login' element={<Login/>}></Route>
-        <Route path='/assis-img' element={<AssistantImage/>}></Route>
-        <Route path='/assis-name' element={<AssistantName/> }></Route> 
-        <Route path='*' element={<NotFound/>}></Route>
-      </Routes>
+          <Route path="/" element={userData ? <Home /> : <Navigate to="/login" />}/>
+          <Route path="/login" element={!userData ? <Login /> : <Navigate to="/" />}/>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/assis-img" element={userData? <AssistantImage />: <Navigate to="/login"/>}/>
+          <Route path="/assis-name" element={userData? <AssistantName />: <Navigate to="/login"/>}/>
+          <Route path="*" element={<NotFound />} />
+     </Routes>
     </>
   )
 }
