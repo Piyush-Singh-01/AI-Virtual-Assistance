@@ -5,9 +5,11 @@ import { FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import axios from 'axios'
 import {toast} from 'react-toastify'
-
+import { useDispatch } from "react-redux";
+import {setUserData} from "../redux/imageSlice";
 
 function Login() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [eye, setEye]  = useState(true);
     const [info, setInfo] = useState({
@@ -43,7 +45,8 @@ function Login() {
             if(res.status == 200 ){
                 toast.success(res.data.msg || "Login Successful");
                 setInfo({email: "", password: ""});
-                navigate("/assis-img");
+                dispatch(setUserData(res.data.user));
+                navigate("/");
             }
         } catch (error) {
             toast.error(error.response?.data?.msg || "Invalid email or password")
