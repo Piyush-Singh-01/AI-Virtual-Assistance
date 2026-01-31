@@ -11,7 +11,7 @@ const geminiResponse = require("./Gemini");
 const app = express();
 
 app.use(cors({
-    origin: "https://frontend-ai-virtual-assistance.onrender.com",
+    origin: "https://piyush-ai-virtual-assistance.onrender.com",
     credentials: true
 }));
 
