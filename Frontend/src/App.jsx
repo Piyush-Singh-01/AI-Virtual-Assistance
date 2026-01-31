@@ -16,7 +16,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const currentUser = async()=>{
        try {
-          const result = await axios.get("http://localhost:8000/api/user/currentUser",
+          const result = await axios.get("https://backend-ai-virtual-assistance.onrender.com/api/user/currentUser",
             {withCredentials: true}
           )
           dispatch(setUserData(result.data));
