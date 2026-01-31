@@ -22,7 +22,7 @@ function SelectName() {
             formData.append("imageUrl", selectedImage); // user selected predefined image, selectedImage is a URL/local asset, 
          }
 
-         const result = await axios.post("http://localhost:8000/api/user/update", formData ,{withCredentials:true})
+         const result = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/user/update", formData ,{withCredentials:true})
          console.log(result.data);
          dispatch(setUserData(result.data))
       } catch (error) {
