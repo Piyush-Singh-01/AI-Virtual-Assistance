@@ -5,8 +5,11 @@ import { FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import axios from 'axios'
 import {toast} from 'react-toastify'
+import {setUserData} from "../redux/imageSlice";
+import { useDispatch } from "react-redux";
 
 function SignUp() {
+     const dispatch = useDispatch();
      const navigate = useNavigate();
      const [eye, setEye]  = useState(true);
      const [info, setInfo] = useState({
@@ -44,6 +47,7 @@ function SignUp() {
               setInfo({username: "", email: "", password: ""})
               toast.success(res.data.msg || "SignUp Successfully");
               setInfo({username:"", email: "", password: ""})
+              dispatch(setUserData(res.data.user));
               navigate("/assis-img")
             }
          } catch (error) {
