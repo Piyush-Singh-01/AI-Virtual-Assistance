@@ -58,22 +58,13 @@ const Login = async(req,res)=>{
                 httpOnly: true
             });
          
-            return res.status(200).json({
-                msg: "Login successfully",
-                user: {
-                    _id: userExist._id,
-                    username: userExist.username,
-                    email: userExist.email,
-               }
-            })
-        }
-        else{
-            return res.status(400).json({msg: "Invalid email or password"});
-        }
-        
+        const user = await User.findById(userExist._id).select("-password");
+        return res.status(200).json({msg: "Login successfully",user});
+     }
+
     } catch (error) {
         console.log("Error from login", error);
-        res.status(500).send({msg: "Server error during Login"})
+        return res.status(500).json({msg: "Invalid email or password"});
     }
 }
 
