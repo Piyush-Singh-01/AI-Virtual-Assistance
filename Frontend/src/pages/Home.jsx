@@ -337,7 +337,7 @@ function Home() {
   }
       <IoMdMenu onClick={()=> setDesktopHistory(true)} className="absolute cursor-pointer text-white text-2xl hidden lg:block top-4 left-6" />
       {desktopHistory &&
-       <div className=" flex flex-col gap:4 absolute top-0 left-0 w-full max-w-[500px] min-h-screen bg-black/20 backdrop-blur">
+       <div className=" flex flex-col gap:4 absolute top-0 left-0 w-full max-w-[500px] min-h-screen bg-white/20 backdrop-blur">
          <RxCross2 onClick={()=> setDesktopHistory(false)} className="absolute top-4 right-8 text-2xl text-white" />
           <div className="w-full h-[80vh] p-4 pb-8 gap-2 flex flex-col mt-10 overflow-y-scroll [&::-webkit-scrollbar]:hidden"> 
             <h1 className="text-gray-200 text-3xl font-medium mb-4 text-center">History</h1>
