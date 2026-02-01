@@ -173,7 +173,7 @@ function Home() {
   const handleGeminiCall = async (command) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/user/getData",
+        "https://backend-ai-virtual-assistance.onrender.com/api/user/getData",
         { command },
         { withCredentials: true }
       );
