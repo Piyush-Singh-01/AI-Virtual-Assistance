@@ -339,7 +339,7 @@ function Home() {
       {desktopHistory &&
        <div className=" flex flex-col gap:4 absolute top-0 left-0 w-full max-w-[500px] min-h-screen bg-black/20 backdrop-blur">
          <RxCross2 onClick={()=> setDesktopHistory(false)} className="absolute top-4 right-8 text-2xl text-white" />
-          <div className="w-full h-[80vh] p-4 pb-8 gap-2 flex flex-col mt-10 overflow-y-scroll [&::-webkit-scrollbar]:hidden bg-black/20"> 
+          <div className="w-full h-[80vh] p-4 pb-8 gap-2 flex flex-col mt-10 overflow-y-scroll [&::-webkit-scrollbar]:hidden"> 
             <h1 className="text-gray-200 text-3xl font-medium mb-4 text-center">History</h1>
              {userData?.history?.map((history, index)=>(
               <div key={index} className="flex  gap-2 relative mt-4">
