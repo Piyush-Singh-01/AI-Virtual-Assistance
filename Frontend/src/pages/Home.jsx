@@ -29,7 +29,7 @@ function Home() {
   const logoutUser = async () => {
     try {
       await axios.post(
-        "http://localhost:8000/api/auth/logout",
+        "https://backend-ai-virtual-assistance.onrender.com/api/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -316,10 +316,10 @@ function Home() {
          <RxCross2 onClick={()=> setMobileMenu(false)} className="absolute top-2 right-2 text-2xl text-white" />
          <div className="flex flex-col mt-4 ml-4 gap-4">   
           <button onClick={logoutUser}
-            className="w-fit bg-blue-900 px-4 py-1 rounded-2xl text-white" >Logout
+            className="w-fit bg-blue-900 px-4 py-1 rounded-2xl text-white cursor-pointer" >Logout
           </button>       
           <button onClick={()=> navigate("/assis-img")}
-            className="w-fit bg-blue-900 px-2 py-1 rounded-2xl text-white">Customize your Assistant
+            className="w-fit bg-blue-900 px-2 py-1 rounded-2xl text-white cursor-pointer">Customize your Assistant
           </button>
 
           <div className="relative w-full h-[60vh] p-4 pb-3 gap-2 flex flex-col mt-10 overflow-y-scroll [&::-webkit-scrollbar]:hidden "> 
