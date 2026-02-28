@@ -33,8 +33,8 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Checking authentication...
+      <div className="min-h-screen flex items-center justify-center ">
+        Loading...
       </div>
     );
   }
