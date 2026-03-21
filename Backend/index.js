@@ -6,7 +6,6 @@ const AuthRouter = require("./route/Auth-Route");
 const UserRouter = require("./route/User-Route");
 const DBConnection = require("./DBConnection");
 const cors = require('cors');
-const geminiResponse = require("./Gemini");
 
 const app = express();
 

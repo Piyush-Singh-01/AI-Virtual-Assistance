@@ -22,6 +22,7 @@ function App() {
           dispatch(setUserData(result.data));
           console.log(result.data);
         } catch (error) {
+          dispatch(setUserData(null)); // important
           console.log("error in getting current data",error);
        }finally{
          setLoading(false);
@@ -29,7 +30,7 @@ function App() {
     }
     useEffect(()=>{
        currentUser();
-    },[])
+    },[]);
 
   if (loading) {
     return (
@@ -50,6 +51,7 @@ function App() {
      </Routes>
     </>
   )
+
 }
 
 export default App

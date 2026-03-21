@@ -1,6 +1,7 @@
 const User = require("../User-Model.js");
 const uploadOnCloudinary = require("../utils/uploadOnCloudinary.js");
 const geminiResponse = require("../Gemini.js")
+const ollamaResponse = require("../ollamaResponse");
 
 const getCurrentUser = async(req, res)=>{
     try {
@@ -12,7 +13,7 @@ const getCurrentUser = async(req, res)=>{
         return res.status(200).json(user);
     } catch (error) {
         console.log("Error in User-Controller", error);
-        return res.status(400).json({msg: "Get current user error"});
+        return res.status(500).json({msg: "Get current user error"});
     }
 }
 
@@ -25,7 +26,6 @@ const updateAssistant = async(req, res)=>{
         }else{
             assistantImage = imageUrl;
         }
-        
         const user = await User.findByIdAndUpdate(req.userId,
             {assistantName,assistantImage},
             {new:true}).select("-password");
@@ -56,11 +56,11 @@ const askToAssistant = async(req, res)=>{
             return res.status(404).json({ message: "User not found" });
         }
          user.history.push(command);
-         user.save();
+         await user.save();
         const userName = user.username;
         const assistantName = user.assistantName;
         const result = await geminiResponse(command, assistantName, userName);
-
+        // const result = await ollamaResponse(command, assistantName, userName);
         const gemResult = JSON.parse(result);
         return res.status(200).json(gemResult);
     }catch (error) {

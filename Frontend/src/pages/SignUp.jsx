@@ -39,9 +39,8 @@ function SignUp() {
               toast.warning("All Fields are require");
               return;
         }
-          setLoading(true);
          try {
-            const res = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/auth/signup",
+            const res = await axios.post("http://localhost:8000/api/auth/signup",
                info,
               {withCredentials:true}
               );
@@ -55,9 +54,7 @@ function SignUp() {
          } catch (error) {
             console.log(error);
             toast.error(error.response?.data?.msg || "Something went wrong");
-         }finally{
-              setLoading(false);
-         }
+         }      
     }  
   return (
     <main className="w-full h-screen flex items-center justify-center"
@@ -68,7 +65,7 @@ function SignUp() {
             backgroundRepeat: "no-repeat",
          }}   
          >
-        <form onSubmit={handleSubmit} className="flex flex-col text-center  bg-white/40 backdrop-blur p-6 rounded-xl gap-4 mx-4 w-full max-w-[600px]">
+        <form onSubmit={handleSubmit} className="flex flex-col text-center  bg-white/40 backdrop-blur p-6 rounded-xl gap-8 mx-4 w-full max-w-[600px]">
             <h1 className="text-2xl text-center">Register to <span className="text-blue-600">Virtual Assistant</span></h1>
             <input className=" border rounded-2xl p-2 outline-none" type="text" name="username" value={info.username} onChange={handleInput} placeholder='Enter your Name'/>
             <input className="border rounded-2xl p-2 outline-none" type="email" placeholder='Email' name="email" value={info.email} onChange={handleInput}/>
@@ -80,7 +77,7 @@ function SignUp() {
                 }
 
              </div>            
-             <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">{loading? "Loading..." : "Sign Up"}</button>
+             <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">Sign Up</button>
             <h1>Already have an account? <Link className="text-blue-700 hover:underline" to="/login">Login</Link></h1>
         </form>
     </main>

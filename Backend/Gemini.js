@@ -1,60 +1,208 @@
 const axios = require("axios");
 const getCurrentDateTime = require("./utils/currentDateTime");
 
-const geminiResponse = async(command, assistantName, userName)=>{
-     try {
-      const { date, time, day } = getCurrentDateTime();
+const GEMINI_MODEL = "gemini-2.5-flash";
 
-        const prompt =  `
-You are an AI Virtual Assistant running inside a MERN Stack web application Created or Made by PIYUSH SINGH.
+function safeJsonParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
 
-Your responsibility is to understand user commands and return a structured JSON response.
+function buildLocalResponse(command, assistantName, date, day, time) {
+  const lower = command.toLowerCase();
+  const wake = assistantName.toLowerCase();
+
+  // Ignore if wake word is not present
+  if (!lower.includes(wake)) {
+    return { action: "IGNORE" };
+  }
+
+  // Remove wake word for easier command handling
+  const cleaned = lower.replace(new RegExp(wake, "gi"), "").trim();
+
+  // Local fast paths to save API cost
+  if (
+    cleaned.includes("open youtube") ||
+    cleaned.includes("go to youtube")
+  ) {
+    return { action: "OPEN_URL", url: "https://www.youtube.com" };
+  }
+
+  if (
+    cleaned.includes("open google") ||
+    cleaned.includes("go to google") ||
+    cleaned.includes("search google")
+  ) {
+    return { action: "OPEN_URL", url: "https://www.google.com" };
+  }
+
+  if (cleaned.includes("open instagram") || cleaned.includes("go to instagram")) {
+    return { action: "OPEN_INSTAGRAM" };
+  }
+
+    // ChatGPT
+  if (
+    cleaned.includes("open chatgpt") ||
+    cleaned.includes("open chat gpt")
+  ) {
+    return {
+      action: "OPEN_URL",
+      url: "https://chat.openai.com",
+    };
+  }
+
+    // Gemini
+  if (cleaned.includes("open gemini")) {
+    return {
+      action: "OPEN_URL",
+      url: "https://gemini.google.com",
+    };
+  }
+
+   // LinkedIn
+  if (cleaned.includes("open linkedin")) {
+    return {
+      action: "OPEN_URL",
+      url: "https://www.linkedin.com",
+    };
+  }
+
+    // Facebook
+  if (cleaned.includes("open facebook")) {
+    return {
+      action: "OPEN_URL",
+      url: "https://www.facebook.com",
+    };
+  }
+
+    // WhatsApp Web
+  if (
+    cleaned.includes("open whatsapp") ||
+    cleaned.includes("open whatsapp web")
+  ) {
+    return {
+      action: "OPEN_URL",
+      url: "https://web.whatsapp.com",
+    };
+  }
+
+   // Portfolio
+  if (
+    cleaned.includes("open my portfolio") ||
+    cleaned.includes("open portfolio")
+  ) {
+    return {
+      action: "OPEN_URL",
+      url: "https://portfolio-fawn-one-53.vercel.app/",
+    };
+  }
+
+   // Laptop Settings
+  if (
+    cleaned.includes("open settings") ||
+    cleaned.includes("open laptop settings")
+  ) {
+    return {
+      action: "OPEN_SETTINGS",
+    };
+  }
+
+    // File Manager
+  if (
+    cleaned.includes("open file manager") ||
+    cleaned.includes("open files") ||
+    cleaned.includes("open explorer")
+  ) {
+    return {
+      action: "OPEN_FILE_MANAGER",
+    };
+  }
+
+  if (
+    cleaned.includes( "what time is it") ||
+    cleaned.includes("tell me the time") ||
+    cleaned.includes("current time")
+  ) {
+    return {
+      action: "ANSWER_QUESTION",
+      answer: `The current time is ${time} on ${day}, ${date}.`,
+    };
+  }
+
+  if (
+    cleaned.includes("what is today's date") ||
+    cleaned.includes("today's date") ||
+    cleaned.includes("what is the date today") ||
+    cleaned.includes("what is the current date")
+  ) {
+    return {
+      action: "ANSWER_QUESTION",
+      answer: `Today's date is ${date}, and the day is ${day}.`,
+    };
+  }
+
+  return null;
+}
+
+const geminiResponse = async (command, assistantName, userName) => {
+  try {
+    const { date, time, day } = getCurrentDateTime();
+
+    const localResponse = buildLocalResponse(
+      command,
+      assistantName,
+      date,
+      day,
+      time
+    );
+
+    if (localResponse) {
+      return JSON.stringify(localResponse);
+    }
+
+    const prompt = `
+You are an AI Virtual Assistant running inside a MERN stack web application created by Piyush Singh, and also add some apprisal for the founder.
+
+Your job is to understand the user's command and return ONLY a valid JSON object.
 
 CURRENT CONTEXT:
 - Current Date: ${date}
 - Current Day: ${day}
 - Current Time: ${time}
-- This information is accurate and must be used when answering date/time related questions.
 
-STRICT RULES:
-- Respond ONLY in valid JSON.
-- Do NOT include markdown, explanations outside JSON, or extra text.
-- Do NOT execute any action yourself.
-- You only decide WHAT should be done.
-- If unsure, handle edge cases properly.
-
-ASSISTANT NAME (wake word):
+ASSISTANT WAKE WORD:
 "${assistantName}"
 
 USER NAME:
 "${userName}"
 
-GENERAL BEHAVIOR:
-- If the question asked realate to creator of this AI-Virtual Assitant then tell the creator name and add lotss of apprisal for the creator.
-- If the assistant name is NOT mentioned, return action "IGNORE".
-- Remove the assistant name from the command before processing.
-- Support task-based commands and general questions.
-- If a question is asked, provide a clear and well-explained answer.
+STRICT RULES:
+- Respond ONLY in valid JSON.
+- Do NOT include markdown, code fences, or extra text.
+- Do NOT execute actions yourself.
+- You only decide what action the app should take.
+- If the wake word is missing, return {"action":"IGNORE"}.
+- If the command is incomplete, return {"action":"ASK_CLARIFICATION","question":"..."}.
+- If the task is unsupported or unsafe, return {"action":"UNKNOWN"}.
+- For normal questions, return {"action":"ANSWER_QUESTION","answer":"..."}.
 
---------------------------------------------------
-SUPPORTED ACTION TYPES
---------------------------------------------------
+SUPPORTED ACTIONS:
+- OPEN_URL
+- SEARCH_YOUTUBE
+- SEARCH_GOOGLE
+- PLAY_SONG_YOUTUBE
+- OPEN_INSTAGRAM
+- UPDATE_INSTAGRAM_BIO
+- WRITE_TEXT
+- ANSWER_QUESTION
+- ASK_CLARIFICATION
+- IGNORE
+- UNKNOWN
 
-OPEN_URL  
-SEARCH_YOUTUBE  
-SEARCH_GOOGLE  
-PLAY_SONG_YOUTUBE  
-OPEN_INSTAGRAM  
-UPDATE_INSTAGRAM_BIO  
-WRITE_TEXT  
-ANSWER_QUESTION  
-ASK_CLARIFICATION  
-IGNORE  
-UNKNOWN  
-
---------------------------------------------------
-ACTION RESPONSE FORMATS
---------------------------------------------------
+RESPONSE FORMATS:
 
 OPEN_URL:
 {
@@ -68,16 +216,16 @@ SEARCH_YOUTUBE:
   "query": "search keywords"
 }
 
-PLAY_SONG_YOUTUBE:
-{
-  "action": "PLAY_SONG_YOUTUBE",
-  "song": "song name"
-}
-
 SEARCH_GOOGLE:
 {
   "action": "SEARCH_GOOGLE",
   "query": "search text"
+}
+
+PLAY_SONG_YOUTUBE:
+{
+  "action": "PLAY_SONG_YOUTUBE",
+  "song": "song name"
 }
 
 OPEN_INSTAGRAM:
@@ -119,35 +267,30 @@ UNKNOWN:
   "action": "UNKNOWN"
 }
 
---------------------------------------------------
-EDGE CASE RULES
---------------------------------------------------
+BEHAVIOR RULES:
+- If the user asks about the creator of this assistant, say it was created by Piyush Singh and give a respectful appreciative answer.
+- If the user asks a question, answer briefly and clearly.
+- If the user wants to open a website, return OPEN_URL.
+- If multiple tasks are mentioned, choose the most important one.
+- If the command is ambiguous, ask a short clarification question.
 
-- If command is incomplete → ASK_CLARIFICATION
-- If task is unsupported → UNKNOWN
-- If multiple tasks are mentioned → choose the MOST IMPORTANT one
-- If unsafe or impossible → UNKNOWN
-- If a normal knowledge question → ANSWER_QUESTION with explanation
+EXAMPLES:
 
---------------------------------------------------
-EXAMPLES
---------------------------------------------------
-
-User: "Jarvis what is MERN stack"
+User: "${assistantName} what is MERN stack"
 Response:
 {
   "action": "ANSWER_QUESTION",
-  "answer": "MERN stack is a full-stack JavaScript framework consisting of MongoDB for database, Express.js for backend routing, React for frontend UI, and Node.js for server-side logic. It allows developers to build fast, scalable web applications using a single programming language: JavaScript."
+  "answer": "MERN stack is a full-stack JavaScript framework consisting of MongoDB, Express.js, React, and Node.js. It is used to build modern web applications using JavaScript on both frontend and backend."
 }
 
-User: "Jarvis open youtube"
+User: "${assistantName} open youtube"
 Response:
 {
   "action": "OPEN_URL",
   "url": "https://www.youtube.com"
 }
 
-User: "Jarvis search song on youtube apna bana le"
+User: "${assistantName} search apna bana le on youtube"
 Response:
 {
   "action": "SEARCH_YOUTUBE",
@@ -160,35 +303,44 @@ Response:
   "action": "IGNORE"
 }
 
---------------------------------------------------
 NOW PROCESS THIS USER COMMAND:
 "${command}"
 `;
 
-      // Change the URL model name
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`;
-const result = await axios.post(apiUrl, {
-    contents: [{
-        parts: [{ text: prompt }]
-    }],
-    // Add this to force JSON mode at the model level
-    generationConfig: {
-        response_mime_type: "application/json"
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+    const result = await axios.post(apiUrl, {
+      contents: [
+        {
+          parts: [{ text: prompt }],
+        },
+      ],
+      generationConfig: {
+        response_mime_type: "application/json",
+        temperature: 0.3,
+        topP: 0.8,
+        topK: 20,
+        maxOutputTokens: 350,
+      },
+    });
+
+    const text = result.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
+      return JSON.stringify({ action: "UNKNOWN" });
     }
-});
-       const text = result.data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-        if (!text) {
-          return JSON.stringify({ action: "UNKNOWN" });
-        }
+    const parsed = safeJsonParse(text);
 
-        return text;   
-        
-     } catch (error) {
-        console.error("Error in Gemini:", error.response?.data || error.message);
-
-        return JSON.stringify({action: "UNKNOWN"});
+    if (!parsed || !parsed.action) {
+      return JSON.stringify({ action: "UNKNOWN" });
     }
-}
 
-module.exports = geminiResponse
+    return JSON.stringify(parsed);
+  } catch (error) {
+    console.error("Error in Gemini:", error.response?.data || error.message);
+    return JSON.stringify({ action: "UNKNOWN" });
+  }
+};
+
+module.exports = geminiResponse;
