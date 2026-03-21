@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import {setUserData} from "../redux/imageSlice";
 
 function Login() {
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [eye, setEye]  = useState(true);
@@ -18,19 +19,13 @@ function Login() {
      })
 
     const handleInput = (e)=>{
-         // const inputName = e.target.name;
-        // const inputValue = e.target.value;
-        // const oldData = {...info};
-        // oldData[inputName] = inputValue;
-        // setInfo(oldData);
-
         const {name, value} = e.target;
         setInfo({
             ...info,
             [name]: value
         });
      }
-
+    setLoading(true);
      const handleSubmit = async(e)=>{
          e.preventDefault();
          if (!info.email || !info.password) {
@@ -51,7 +46,9 @@ function Login() {
         } catch (error) {
             toast.error(error.response?.data?.msg || "Invalid email or password")
             console.log(error)
-        }  
+        }finally{
+            setLoading(false);
+        }
      }
   return (
     <main className="w-full h-screen flex items-center justify-center"
@@ -72,7 +69,7 @@ function Login() {
                   :<span onClick={()=> setEye(!eye)} className="absolute right-6 top-3 text-xl cursor-pointer"><FaRegEye /></span>     
                 }
              </div>
-            <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500 cursor-pointer">Login</button>
+            <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500 cursor-pointer">{loading? "Loading...": "Login"}</button>
             <h1>Create a new account? <Link className="text-blue-700 hover:underline" to="/signup">SignUp</Link></h1>
         </form>
     </main>
