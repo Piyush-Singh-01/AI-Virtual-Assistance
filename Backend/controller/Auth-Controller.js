@@ -61,6 +61,7 @@ const Login = async(req,res)=>{
         const user = await User.findById(userExist._id).select("-password");
         return res.status(200).json({msg: "Login successfully",user});
      }
+        return res.status(400).json({msg: "Invalid Email or Password});
 
     } catch (error) {
         console.log("Error from login", error);
