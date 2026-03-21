@@ -9,6 +9,7 @@ import {setUserData} from "../redux/imageSlice";
 import { useDispatch } from "react-redux";
 
 function SignUp() {
+     const [loading, setLoading] = useState(false);
      const dispatch = useDispatch();
      const navigate = useNavigate();
      const [eye, setEye]  = useState(true);
@@ -38,6 +39,7 @@ function SignUp() {
               toast.warning("All Fields are require");
               return;
         }
+          setLoading(true);
          try {
             const res = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/auth/signup",
                info,
@@ -53,7 +55,9 @@ function SignUp() {
          } catch (error) {
             console.log(error);
             toast.error(error.response?.data?.msg || "Something went wrong");
-         }      
+         }finally{
+              setLoading(false);
+         }
     }  
   return (
     <main className="w-full h-screen flex items-center justify-center"
@@ -76,7 +80,7 @@ function SignUp() {
                 }
 
              </div>            
-             <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">Sign Up</button>
+             <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">{loading? "Loading..." : "Sign Up"}</button>
             <h1>Already have an account? <Link className="text-blue-700 hover:underline" to="/login">Login</Link></h1>
         </form>
     </main>
