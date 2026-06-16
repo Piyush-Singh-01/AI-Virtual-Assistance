@@ -208,7 +208,7 @@ const handleAction = (data) => {
   const deleteHistory = async (index) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8000/api/user/history/${index}`,
+        `https://backend-ai-virtual-assistance.onrender.com/api/user/history/${index}`,
         { withCredentials: true }
       );
       toast.success(res.data.msg);
