@@ -40,7 +40,7 @@ function SignUp() {
               return;
         }
          try {
-            const res = await axios.post("http://localhost:8000/api/auth/signup",
+            const res = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/auth/signup",
                info,
               {withCredentials:true}
               );
