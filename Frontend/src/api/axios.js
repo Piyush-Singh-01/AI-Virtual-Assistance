@@ -7,7 +7,6 @@ const api = axios.create({
   // baseURL: "https://backend-ai-virtual-assistance.onrender.com/api"
   // baseURL: "http://localhost:8000/api",
   withCredentials: true, // if you're using cookies/sessions
-  https://backend-ai-virtual-assistance.onrender.com/api
 });
 
 export default api;
