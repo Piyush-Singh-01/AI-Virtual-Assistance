@@ -33,9 +33,12 @@ const SignUp = async(req, res)=>{
         })
 
     } catch (error) {
-        res.status(500).send({msg: "SignUp Server error"});
-        console.log("Error from Signup",error);
-    }   
+       console.error("Signup Error:", error);
+       return res.status(500).json({
+         success: false,
+         msg: error.message,
+    });
+} 
 }
 
 const Login = async(req,res)=>{
@@ -63,10 +66,13 @@ const Login = async(req,res)=>{
      }
         return res.status(400).json({msg: "Invalid Email or Password"});
 
-    } catch (error) {
-        console.log("Error from login", error);
-        return res.status(500).json({msg: "Invalid email or password"});
-    }
+    }catch (error) {
+      console.error("Login Error:", error);
+      return res.status(500).json({
+        success: false,
+        msg: error.message
+    });
+}
 }
 
 const Logout = async(req, res)=>{
@@ -75,7 +81,7 @@ const Logout = async(req, res)=>{
         return res.status(200).json({msg: "Logout Successfully"});
     } catch (error) {
         console.log(error);
-        return res.status(500).json({msg: "Logout error"})
+        return res.status(500).json({success: false, msg: error.message})
     }
 }
 
