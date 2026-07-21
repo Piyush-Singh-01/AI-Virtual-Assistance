@@ -17,7 +17,7 @@ const SignUp = async(req, res)=>{
         
         const token = await genToken(userCreated._id);
         res.cookie("token", token,{
-            secure: false,
+            secure: true,
             sameSite: "lax",
             maxAge: 7*24*60*60*1000,
             httpOnly: true
@@ -52,7 +52,7 @@ const Login = async(req,res)=>{
         if(isMatch){
             const token = await genToken(userExist._id);
             res.cookie("token", token,{
-                secure: false,
+                secure: true,
                 sameSite: "lax",
                 maxAge: 7*24*60*60*1000,
                 httpOnly: true
