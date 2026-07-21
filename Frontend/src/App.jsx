@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import { useDispatch, useSelector } from 'react-redux'
 import {setUserData} from "./redux/imageSlice";
 import NotFound from './pages/ErrorPage'
+import api from "./api/axios";
 
 function App() {
     const userData = useSelector((store)=> store.image.userData);
@@ -16,9 +17,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const currentUser = async()=>{
        try {
-          const result = await axios.get("https://backend-ai-virtual-assistance.onrender.com/api/user/currentUser",
-            {withCredentials: true}
-          )
+          const result = await api.get("/user/currentUser")
           dispatch(setUserData(result.data));
           console.log(result.data);
         } catch (error) {

@@ -7,6 +7,7 @@ import axios from 'axios'
 import {toast} from 'react-toastify'
 import {setUserData} from "../redux/imageSlice";
 import { useDispatch } from "react-redux";
+import api from "../api/axios";
 
 function SignUp() {
      const [loading, setLoading] = useState(false);
@@ -40,10 +41,7 @@ function SignUp() {
               return;
         }
          try {
-            const res = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/auth/signup",
-               info,
-              {withCredentials:true}
-              );
+            const res = await api.post("/auth/signup",info);
             if(res.status === 200 || res.status === 201){
               setInfo({username: "", email: "", password: ""})
               toast.success(res.data.msg || "SignUp Successfully");

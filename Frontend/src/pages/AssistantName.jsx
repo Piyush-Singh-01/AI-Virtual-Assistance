@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setBackendImage, setUserData} from '../redux/imageSlice';
 import axios from 'axios';
+import api from "../api/axios";
 
 function SelectName() {
    const dispatch = useDispatch();
@@ -22,7 +23,7 @@ function SelectName() {
             formData.append("imageUrl", selectedImage); // user selected predefined image, selectedImage is a URL/local asset, 
          }
 
-         const result = await axios.post("https://backend-ai-virtual-assistance.onrender.com/api/user/update", formData ,{withCredentials:true})
+         const result = await api.post("/user/update", formData )
          console.log(result.data);
          dispatch(setUserData(result.data))
       } catch (error) {

@@ -8,6 +8,8 @@ import aiGif from "../assets/ai.gif";
 import { useEffect, useRef, useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { RxCross2, RxCross1 } from "react-icons/rx";
+import api from "../api/axios";
+
 
 function Home() {
   const [responseText, setResponseText] = useState("");
@@ -16,6 +18,7 @@ function Home() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [desktopHistory, setDesktopHistory] = useState(false);
   const [trunk, setTrunk] = useState(true);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,14 +26,10 @@ function Home() {
 
   const recognitionRef = useRef(null);
 
-  /* ---------------- LOGOUT ---------------- */
+  //  LOGOUT 
   const logoutUser = async () => {
     try {
-      await axios.post(
-        "https://backend-ai-virtual-assistance.onrender.com/api/auth/logout",
-        {},
-        { withCredentials: true }
-      );
+      await api.post("/auth/logout",{});
       dispatch(setUserData(null));
       toast.success("Logout Successfully");
       navigate("/login");
@@ -39,7 +38,7 @@ function Home() {
     }
   };
 
-  /* ---------------- ACTION HANDLER ---------------- */
+//  ACTION HANDLER 
 const handleAction = (data) => {
   if (!data || !data.action) {
     speak("Sorry, I did not understand that.");
@@ -124,7 +123,7 @@ const handleAction = (data) => {
   }
 };
 
-  /* ---------------- API CALL ---------------- */
+  //  API CALL 
   const handleGeminiCall = async (command) => {
     try {
       const res = await axios.post(
@@ -139,7 +138,7 @@ const handleAction = (data) => {
     }
   };
 
-  /* ---------------- SPEAK ---------------- */
+  //  SPEAK 
   const speak = (text) => {
     if (!text) return;
 
@@ -161,7 +160,7 @@ const handleAction = (data) => {
     window.speechSynthesis.speak(utterance);
   };
 
-  /* ---------------- UNLOCK AUDIO ---------------- */
+  // UNLOCK AUDIO 
   const unlockAudio = () => {
     if (audioUnlocked) return;
 
@@ -172,7 +171,7 @@ const handleAction = (data) => {
     speak("Hello, how can I help you Today?");
   };
 
-  /* ---------------- SPEECH RECOGNITION ---------------- */
+  //  SPEECH RECOGNITION 
   useEffect(() => {
     if (!userData?.assistantName) return;
 
@@ -204,13 +203,11 @@ const handleAction = (data) => {
     return () => recognition.stop();
   }, [userData]);
 
-  /* ---------------- DELETE HISTORY ---------------- */
+  // DELETE HISTORY 
   const deleteHistory = async (index) => {
     try {
-      const res = await axios.delete(
-        `https://backend-ai-virtual-assistance.onrender.com/api/user/history/${index}`,
-        { withCredentials: true }
-      );
+      const res = await axios.delete(`/user/history/${index}`);
+      
       toast.success(res.data.msg);
       dispatch(setUserData(res.data.user));
     } catch {
@@ -250,32 +247,68 @@ const handleAction = (data) => {
       {/* MOBILE MENU */}
       <IoMdMenu
         onClick={() => setMobileMenu(true)}
-        className="absolute top-4 right-6 text-white text-2xl lg:hidden"
+        className="absolute top-4 right-6 text-white text-2xl lg:hidden cursor-pointer"
       />
 
       {mobileMenu && (
-        <div className="pt-12 lg:hidden fixed top-0 right-0 w-full max-w-[400px] h-screen bg-black/30 backdrop-blur flex flex-col p-4 gap-4">
-          <RxCross2
-            onClick={() => setMobileMenu(false)}
-            className="text-white text-2xl self-end absolute top-2 left-4"
-          />
+        <div className="lg:hidden fixed top-0 right-0 z-50 w-full max-w-[320px] h-screen bg-[#0a0a32]/90 backdrop-blur-xl border-l border-white/10 flex flex-col p-6 shadow-2xl transition-transform duration-300">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold text-white tracking-wide">Menu</h2>
+            <button 
+              onClick={() => setMobileMenu(false)}
+              className="text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
+            >
+              <RxCross2 size={20} />
+            </button>
+          </div>
 
-          <button onClick={logoutUser} className="bg-blue-900 px-4 py-1 mt-4  rounded text-white">
-            Logout
-          </button>
+          <div className="flex flex-col gap-3 mb-8">
+            <button onClick={() => setConfirmAction({ type: 'customize' })} className="bg-blue-600 hover:bg-blue-500 transition-colors px-4 py-2.5 rounded-xl text-white font-medium shadow-lg shadow-blue-900/20">
+              Customize Assistant
+            </button>
+            <button onClick={() => setConfirmAction({ type: 'logout' })} className="bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/10 hover:border-red-500/30 transition-all px-4 py-2.5 rounded-xl font-medium">
+              Logout
+            </button>
+          </div>
 
-          <button onClick={() => navigate("/assis-img")} className="bg-blue-900 px-4 py-1 rounded text-white">
-            Customize Assistant
-          </button>
-
-          <div className="overflow-y-auto mt-4">
-            {userData?.history?.map((h, i) => (
-              <div key={i} className="flex gap-2 text-white">
-                <span>{i + 1}.</span>
-                <p className={`${trunk && "truncate"}`}>{h}</p>
-                <RxCross1 onClick={() => deleteHistory(i)} />
-              </div>
-            ))}
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Voice History</h3>
+              <button onClick={() => setTrunk(!trunk)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                {trunk ? "Show All" : "Truncate"}
+              </button>
+            </div>
+            
+            <div className="overflow-y-auto flex-1 space-y-2 pr-1 custom-scrollbar pb-4">
+              {userData?.history?.length > 0 ? (
+                userData.history.map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-3 p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden flex-1">
+                      <span className="flex items-center justify-center min-w-[26px] h-[26px] bg-blue-500/20 text-blue-300 rounded-full text-xs font-bold">
+                        {i + 1}
+                      </span>
+                      <p className={`text-sm text-gray-200 ${trunk ? "truncate" : ""} flex-1`} title={h}>
+                        {h}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteHistory(i)}
+                      className="text-gray-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-400/10 transition-colors"
+                      title="Delete"
+                    >
+                      <RxCross1 size={16} />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center h-32 text-gray-500 text-sm bg-white/5 rounded-2xl border border-white/5 border-dashed">
+                  <p>No history available.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -283,34 +316,76 @@ const handleAction = (data) => {
       {/* DESKTOP HISTORY */}
       <IoMdMenu
         onClick={() => setDesktopHistory(true)}
-        className="absolute top-4 left-6 text-white text-2xl hidden lg:block"
+        className="absolute top-4 left-6 text-white text-2xl hidden lg:block cursor-pointer hover:text-blue-400 transition-colors"
       />
 
       {desktopHistory && (
-        <div className="fixed top-0 left-0 w-[400px] h-full bg-black/30 backdrop-blur p-4">
-          <RxCross2
-            onClick={() => setDesktopHistory(false)}
-            className="text-white text-2xl"
-          />
-
-          {userData?.history?.map((h, i) => (
-            <div key={i} className="flex gap-2 text-white mt-2">
-              <span>{i + 1}.</span>
-              <p className={`${trunk && "truncate"}`}>{h}</p>
-              <RxCross1 onClick={() => deleteHistory(i)} />
+        <div className="fixed top-0 left-0 z-50 w-[400px] h-screen bg-[#0a0a32]/90 backdrop-blur-xl border-r border-white/10 p-6 shadow-2xl flex flex-col transition-transform duration-300">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-white tracking-wide">Voice History</h2>
+              <span className="bg-blue-600 text-xs px-2 py-0.5 rounded-full text-white">{userData?.history?.length || 0}</span>
             </div>
-          ))}
+            <button 
+              onClick={() => setDesktopHistory(false)}
+              className="text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
+            >
+              <RxCross2 size={20} />
+            </button>
+          </div>
+
+          <div className="flex justify-end mb-2">
+             <button onClick={() => setTrunk(!trunk)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                {trunk ? "Show Full Text" : "Truncate Text"}
+             </button>
+          </div>
+
+          <div className="overflow-y-auto flex-1 space-y-2.5 pr-2 custom-scrollbar pb-6">
+            {userData?.history?.length > 0 ? (
+              userData.history.map((h, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-3 p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 group"
+                >
+                  <div className="flex items-center gap-3.5 overflow-hidden flex-1">
+                    <span className="flex items-center justify-center min-w-[28px] h-[28px] bg-blue-500/20 border border-blue-500/20 text-blue-300 rounded-full text-xs font-bold shadow-inner">
+                      {i + 1}
+                    </span>
+                    <p
+                      className={`text-[15px] text-gray-200 ${
+                        trunk ? "truncate" : ""
+                      } flex-1`}
+                      title={h}
+                    >
+                      {h}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => deleteHistory(i)}
+                    className="text-gray-500 hover:text-red-400 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-400/10"
+                    title="Delete record"
+                  >
+                    <RxCross1 size={18} />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-48 text-gray-500 bg-white/5 rounded-2xl border border-white/5 border-dashed mt-4">
+                <p>No voice history available.</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* we use hidden to hide our button on the small display because we cannot do sm:hidden and lg:flex is use to display on the large device */}
-      <div className="hidden absolute lg:flex flex-col items-center gap-4 top-4 right-2"> 
-        <button onClick={logoutUser}
-          className="bg-blue-900 px-4 py-1 rounded-2xl text-white " >Logout
+      <div className="hidden absolute lg:flex flex-col items-center gap-4 top-4 right-6"> 
+        <button onClick={() => setConfirmAction({ type: 'logout' })}
+          className="bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-gray-300 hover:text-red-400 transition-all px-6 py-2 rounded-xl text-sm font-medium w-full" >Logout
         </button>
         
-        <button onClick={()=> navigate("/assis-img")}
-          className="bg-blue-900 px-2 py-1 rounded-2xl text-white">Customize your Assistant
+        <button onClick={() => setConfirmAction({ type: 'customize' })}
+          className="bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20 px-6 py-2 rounded-xl text-white text-sm font-medium w-full">Customize Assistant
         </button>
       </div>
 
@@ -319,6 +394,47 @@ const handleAction = (data) => {
         <p className="text-white mt-6 text-center w-[80%]">
           {responseText}
         </p>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmAction && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#0a0a32] border border-white/10 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center">
+            <h3 className="text-xl font-bold text-white mb-2">
+              {confirmAction.type === "logout" ? "Confirm Logout" : "Customize Assistant"}
+            </h3>
+            <p className="text-gray-400 mb-6 text-sm">
+              {confirmAction.type === "logout" 
+                ? "Are you sure you want to logout from your account?" 
+                : "Are you sure you want to navigate to the customization page?"}
+            </p>
+            <div className="flex justify-center gap-4">
+              <button 
+                onClick={() => setConfirmAction(null)} 
+                className="px-6 py-2 rounded-xl border border-white/20 text-gray-300 hover:bg-white/10 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  if (confirmAction.type === "logout") {
+                    logoutUser();
+                  } else {
+                    navigate("/assis-img");
+                  }
+                  setConfirmAction(null);
+                }} 
+                className={`px-6 py-2 rounded-xl text-white shadow-lg transition-colors font-medium ${
+                  confirmAction.type === "logout" 
+                    ? "bg-red-600 hover:bg-red-500 shadow-red-900/20" 
+                    : "bg-blue-600 hover:bg-blue-500 shadow-blue-900/20"
+                }`}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );

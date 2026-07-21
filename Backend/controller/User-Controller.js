@@ -40,7 +40,7 @@ const updateAssistant = async(req, res)=>{
 
 const askToAssistant = async(req, res)=>{
     try {
-        console.log("BODY:", req.body); // 👈 debug
+        console.log("BODY:", req.body); //  debug
 
         if (!req.body || !req.body.command) {
         return res.status(400).json({
@@ -89,4 +89,4 @@ const deleteHistory = async(req, res)=>{
      
 }
 
-module.exports = {getCurrentUser, updateAssistant, askToAssistant,deleteHistory};
+module.exports = {getCurrentUser, updateAssistant, askToAssistant, deleteHistory};
