@@ -10,7 +10,8 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-    origin: "https://piyush-ai-virtual-assistance.onrender.com",
+    // origin: "https://piyush-ai-virtual-assistance.onrender.com",
+    origin: "http://localhost:5173",
     credentials: true
 }));
 
