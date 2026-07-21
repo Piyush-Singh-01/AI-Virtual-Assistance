@@ -10,7 +10,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-    origin: "https://ai-virtual-assistance-k9mu.vercel.app",
+    origin: "https://piyush-ai-virtual-assistance.onrender.com",
     
     // origin: "http://localhost:5173",
     credentials: true
