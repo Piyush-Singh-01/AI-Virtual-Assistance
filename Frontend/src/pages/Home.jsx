@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUserData } from "../redux/imageSlice";
@@ -126,7 +125,7 @@ const handleAction = (data) => {
   //  API CALL 
   const handleGeminiCall = async (command) => {
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "/user/getData",
         { command },
         { withCredentials: true }
@@ -206,7 +205,7 @@ const handleAction = (data) => {
   // DELETE HISTORY 
   const deleteHistory = async (index) => {
     try {
-      const res = await axios.delete(`/user/history/${index}`);
+      const res = await api.delete(`/user/history/${index}`);
       
       toast.success(res.data.msg);
       dispatch(setUserData(res.data.user));
