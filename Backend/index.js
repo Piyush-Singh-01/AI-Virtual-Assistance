@@ -4,7 +4,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const AuthRouter = require("./route/Auth-Route");
 const UserRouter = require("./route/User-Route");
-const DBConnection = require("./DBConnection");
+const DBConnection = require("./config/DBConnection");
 const cors = require('cors');
 
 const app = express();
