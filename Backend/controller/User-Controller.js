@@ -1,7 +1,7 @@
-const User = require("../User-Model.js");
+const User = require("../model/User-Model.js");
 const uploadOnCloudinary = require("../utils/uploadOnCloudinary.js");
-const geminiResponse = require("../Gemini.js")
-const ollamaResponse = require("../ollamaResponse");
+const geminiResponse = require("../services/Gemini.js")
+// const ollamaResponse = require("../services/ollamaResponse");
 
 const getCurrentUser = async(req, res)=>{
     try {

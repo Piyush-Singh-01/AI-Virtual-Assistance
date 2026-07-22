@@ -1,5 +1,5 @@
 const axios = require("axios");
-const getCurrentDateTime = require("./utils/currentDateTime");
+const getCurrentDateTime = require("../utils/currentDateTime");
 
 const GEMINI_MODEL = "gemini-2.5-flash";
 
@@ -160,6 +160,7 @@ const geminiResponse = async (command, assistantName, userName) => {
     );
 
     if (localResponse) {
+      console.log("Local Response:", localResponse);
       return JSON.stringify(localResponse);
     }
 
