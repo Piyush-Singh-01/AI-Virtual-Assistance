@@ -18,7 +18,14 @@ function Home() {
   const [desktopHistory, setDesktopHistory] = useState(false);
   const [trunk, setTrunk] = useState(true);
   const [confirmAction, setConfirmAction] = useState(null);
-
+  const [websiteModal, setWebsiteModal] = useState({
+          open: false,
+          title: "",
+          message: "",
+          url: "",
+          buttonText: "",
+          icon: "🌐",
+        });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useSelector((store) => store.image.userData);
@@ -37,6 +44,47 @@ function Home() {
     }
   };
 
+  
+const closeWebsiteModal = () => {
+  setWebsiteModal({
+    open: false,
+    title: "",
+    message: "",
+    url: "",
+    buttonText: "",
+    icon: "🌐",
+  });
+};
+
+  const openWebsiteModal = ({
+    title,
+    message,
+    url,
+    buttonText,
+    icon = "🌐",
+  }) => {
+    setWebsiteModal({
+      open: true,
+      title,
+      message,
+      url,
+      buttonText,
+      icon,
+    });
+  };
+
+const executeWebsiteAction = () => {
+  if (!websiteModal.url) return;
+
+  window.open(
+    websiteModal.url,
+    "_blank",
+    "noopener,noreferrer"
+  );
+
+  closeWebsiteModal();
+};
+
 //  ACTION HANDLER 
 const handleAction = (data) => {
   if (!data || !data.action) {
@@ -45,54 +93,87 @@ const handleAction = (data) => {
   }
 
   switch (data.action) {
-    case "OPEN_URL":
-      if (data.url) {
-        speak("Opening the website");
-        setTimeout(() => window.open(data.url, "_blank"), 500);
-      }
-      break;
+ case "OPEN_URL":
+  if (data.url) {
+    speak("I found the website.");
 
-    case "SEARCH_GOOGLE":
-      if (data.query) {
-        speak(`Searching ${data.query}`);
-        setTimeout(() => {
-          window.open(
-            `https://www.google.com/search?q=${encodeURIComponent(data.query)}`,
-            "_blank"
-          );
-        }, 500);
-      }
-      break;
+    openWebsiteModal({
+      title: "Open Website",
+      message: "Jarvis found the requested website.\nDo you want to open it in a new tab?",
+      url: data.url,
+      buttonText: "Open Website",
+      icon: "🌐",
+    });
+  }
+  break;
 
-    case "SEARCH_YOUTUBE":
-      if (data.query) {
-        speak(`Searching YouTube for ${data.query}`);
-        setTimeout(() => {
-          window.open(
-            `https://www.youtube.com/results?search_query=${encodeURIComponent(data.query)}`,
-            "_blank"
-          );
-        }, 500);
-      }
-      break;
+case "SEARCH_GOOGLE":
+  if (data.query) {
 
-    case "PLAY_SONG_YOUTUBE":
-      if (data.song) {
-        speak(`Playing ${data.song} on YouTube`);
-        setTimeout(() => {
-          window.open(
-            `https://www.youtube.com/results?search_query=${encodeURIComponent(data.song)}`,
-            "_blank"
-          );
-        }, 500);
-      }
-      break;
+    speak(`Searching Google for ${data.query}`);
 
-    case "OPEN_INSTAGRAM":
-      speak("Opening Instagram");
-      setTimeout(() => window.open("https://www.instagram.com", "_blank"), 500);
-      break;
+    openWebsiteModal({
+      title: "Google Search",
+      message: `Search Google for "${data.query}"?`,
+      url: `https://www.google.com/search?q=${encodeURIComponent(
+        data.query
+      )}`,
+      buttonText: "Search Google",
+      icon: "🔍",
+    });
 
+  }
+  break;
+
+case "SEARCH_YOUTUBE":
+  if (data.query) {
+
+    speak(`Searching YouTube for ${data.query}`);
+
+    openWebsiteModal({
+      title: "YouTube",
+      message: `Search YouTube for "${data.query}"?`,
+      url: `https://www.youtube.com/results?search_query=${encodeURIComponent(
+        data.query
+      )}`,
+      buttonText: "Open YouTube",
+      icon: "📺",
+    });
+
+  }
+  break;
+
+case "PLAY_SONG_YOUTUBE":
+  if (data.song) {
+
+    speak(`Playing ${data.song}`);
+
+    openWebsiteModal({
+      title: "Play Song",
+      message: `Play "${data.song}" on YouTube?`,
+      url: `https://www.youtube.com/results?search_query=${encodeURIComponent(
+        data.song
+      )}`,
+      buttonText: "Play Song",
+      icon: "🎵",
+    });
+
+  }
+  break;
+
+case "OPEN_INSTAGRAM":
+
+  speak("Opening Instagram");
+
+  openWebsiteModal({
+    title: "Instagram",
+    message: "Open Instagram in a new tab?",
+    url: "https://www.instagram.com",
+    buttonText: "Open Instagram",
+    icon: "📷",
+  });
+
+  break;
     case "WRITE_TEXT":
       if (data.text) {
         setResponseText(data.text);
@@ -130,7 +211,7 @@ const handleAction = (data) => {
         { command },
         { withCredentials: true }
       );
-
+      console.log("Frontend 2", res);
       await handleAction(res.data);
     } catch (err) {
       console.error(err);
@@ -237,6 +318,52 @@ const handleAction = (data) => {
         alt=""
         title={audioUnlocked ? "Listening..." : "Click to activate voice"}
       />
+
+    {
+      websiteModal.open && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0b1030] shadow-2xl overflow-hidden">
+
+            <div className="p-8 text-center">
+
+              <div className="text-6xl mb-4">
+                {websiteModal.icon}
+              </div>
+
+              <h2 className="text-2xl font-bold text-white">
+                {websiteModal.title}
+              </h2>
+
+              <p className="text-gray-400 mt-4 leading-7 whitespace-pre-line">
+                {websiteModal.message}
+              </p>
+
+            </div>
+
+            <div className="flex border-t border-white/10">
+
+              <button
+                onClick={closeWebsiteModal}
+                className="flex-1 py-4 text-gray-300 hover:bg-white/5 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={executeWebsiteAction}
+                className="flex-1 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold transition"
+              >
+                {websiteModal.buttonText}
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )
+    }
          {!audioUnlocked && (
          <p className="text-gray-400 text-sm mt-2">
            Click the button above to activate voice assistance.
