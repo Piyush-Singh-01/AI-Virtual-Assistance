@@ -8,9 +8,9 @@ function Card({image}) {
   return (
     <div 
     onClick={()=>{
-      dispatch(setSelectedImage(image))
-      setBackendImage(null);
-      setFrontendImage(null);
+      dispatch(setSelectedImage(image));
+      dispatch(setBackendImage(null));
+      dispatch(setFrontendImage(null));
     }}
      className={`w-[170px] h-[250px] hover:border-3
       ${selectedImage === image? "border-4 border-white shadow-2xl shadow-white scale-105": null}

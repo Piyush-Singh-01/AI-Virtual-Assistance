@@ -206,12 +206,11 @@ case "OPEN_INSTAGRAM":
   //  API CALL 
   const handleGeminiCall = async (command) => {
     try {
-      const res = await api.post(
-        "/user/getData",
-        { command },
-        { withCredentials: true }
-      );
+      const res = await api.post("/user/getData", {command}, {withCredentials: true});
       console.log("Frontend 2", res);
+      if (res.data?.userHistory && userData) {
+        dispatch(setUserData({ ...userData, history: res.data.userHistory }));
+      }
       await handleAction(res.data);
     } catch (err) {
       console.error(err);
@@ -248,12 +247,19 @@ case "OPEN_INSTAGRAM":
     window.speechSynthesis.speak(u);
 
     setAudioUnlocked(true);
-    speak("Hello, how can I help you Today?");
+    speak(`Hello ${userData?.username.split(" ").slice(0,1)}, how can I help you Today?`);
   };
+
+  // REDIRECT IF ASSISTANT NOT CONFIGURED
+  useEffect(() => {
+    if (userData && (!userData.assistantName || !userData.assistantImage)) {
+      navigate("/assis-img");
+    }
+  }, [userData, navigate]);
 
   //  SPEECH RECOGNITION 
   useEffect(() => {
-    if (!userData?.assistantName) return;
+    if (!userData?.assistantName || !audioUnlocked) return;
 
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -268,20 +274,30 @@ case "OPEN_INSTAGRAM":
 
     recognition.onresult = async (e) => {
       const transcript = e.results[e.results.length - 1][0].transcript.trim();
-        console.log(transcript);
+      console.log("Transcript:", transcript);
       if (transcript.toLowerCase().includes(userData.assistantName.toLowerCase())) {  
         await handleGeminiCall(transcript);
       }
     };
 
     recognition.onend = () => {
-      if (!window.speechSynthesis.speaking) recognition.start();
+      if (!window.speechSynthesis.speaking) {
+        try {
+          recognition.start();
+        } catch {}
+      }
     };
 
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {}
 
-    return () => recognition.stop();
-  }, [userData]);
+    return () => {
+      try {
+        recognition.stop();
+      } catch {}
+    };
+  }, [userData?.assistantName, audioUnlocked]);
 
   // DELETE HISTORY 
   const deleteHistory = async (index) => {
@@ -297,16 +313,16 @@ case "OPEN_INSTAGRAM":
 
   return (
     <main className="relative w-full min-h-screen bg-gradient-to-t from-black to-[#0a0a32] flex flex-col items-center justify-center text-center">
-      <h1 className="text-white m-2">Please Include the AI name <b className="text-green-700">'{userData?.assistantName}'</b> in every voice command</h1>
+      <h1 className="text-white m-2">Please Include the AI name <b className="text-green-500">'{userData?.assistantName || "Assistant"}'</b> in every voice command</h1>
       {/* Assistant */}
       <div className="flex flex-col items-center pt-6">
         <img
-          src={userData?.assistantImage}
-          className="w-[220px] h-[350px] rounded-2xl object-cover"
-          alt=""
+          src={userData?.assistantImage || aiGif}
+          className="w-[220px] h-[350px] rounded-2xl object-cover shadow-2xl"
+          alt="Assistant"
         />
         <h1 className="text-white text-xl mt-2">
-          Hi, I'm <b>{userData?.assistantName}</b>, Your AI Assistant
+          Hi, I'm <b>{userData?.assistantName || "Assistant"}</b>, Your AI Assistant
         </h1>
       </div>
 

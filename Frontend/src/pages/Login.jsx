@@ -44,7 +44,11 @@ function Login() {
         toast.success(res.data.msg || "Login Successful");
         setInfo({ email: "", password: "" });
         dispatch(setUserData(res.data.user));
-        navigate("/");
+        if (!res.data.user?.assistantName || !res.data.user?.assistantImage) {
+          navigate("/assis-img");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       toast.error(
