@@ -11,18 +11,18 @@ import store from './redux/store.jsx'
 createRoot(document.getElementById('root')).render(
  <BrowserRouter>
     <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      position="top-center"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss={false}
+      draggable
+      pauseOnHover
+      theme="light"
+      transition={Bounce}
+    />
     <Provider store={store}>
       <App />
     </Provider>
