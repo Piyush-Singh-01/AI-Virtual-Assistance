@@ -36,10 +36,11 @@ function SignUp() {
 
      const handleSubmit = async(e)=>{
          e.preventDefault();
-           if (!info.username || !info.email || !info.password) {
-              toast.warning("All Fields are require");
-              return;
-        }
+         if (!info.username || !info.email || !info.password) {
+            toast.warning("All Fields are require");
+            return;
+         }
+         setLoading(true);
          try {
             const res = await api.post("/auth/signup",info);
             if(res.status === 200 || res.status === 201){
@@ -52,7 +53,9 @@ function SignUp() {
          } catch (error) {
             console.log(error);
             toast.error(error.response?.data?.msg || "Something went wrong");
-         }      
+         }finally{
+            setLoading(false);
+         }   
     }  
   return (
     <main className="w-full h-screen flex items-center justify-center"
@@ -75,7 +78,9 @@ function SignUp() {
                 }
 
              </div>            
-             <button type="submit" className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">Sign Up</button>
+             <button type="submit" className="bg-blue-400 cursor-pointer px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500">
+               {loading ? "Loading" : "SignUp"}
+            </button>
             <h1>Already have an account? <Link className="text-blue-700 hover:underline" to="/login">Login</Link></h1>
         </form>
     </main>

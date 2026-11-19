@@ -23,10 +23,7 @@ function Robot() {
   const handleImage = (e)=>{
     const file = e.target.files[0];
     if(!file) return;
-    // console.log(selectedImage);
-    // console.log(file);
       dispatch(setBackendImage(file));
-      // setBackendImage(file);
       dispatch(setFrontendImage(URL.createObjectURL(file))) // i am creating a url for the image 
   }
   return (
@@ -56,7 +53,7 @@ function Robot() {
             </div>
           <input onChange={handleImage} type="file" accept="image/*" ref={inputImage} hidden/>
        </div>
-          {selectedImage && <button onClick={()=> navigate("/assis-name")} className="bg-white px-6 py-2 font-medium rounded-2xl w-fit ">Next</button>}
+          {selectedImage && <button onClick={()=> navigate("/assis-name")} className="bg-white px-6 py-2 cursor-pointer font-medium rounded-2xl w-fit ">Next</button>}
     </main>
   )
 }

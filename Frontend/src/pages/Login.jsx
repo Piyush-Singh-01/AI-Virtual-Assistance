@@ -108,7 +108,7 @@ function Login() {
 
         <button
           type="submit"
-          className="bg-blue-400 px-4 py-2 w-fit mx-auto rounded-xl hover:bg-blue-500"
+          className="bg-blue-400 px-4 py-2 cursor-pointer w-fit mx-auto rounded-xl hover:bg-blue-500"
         >
           {loading ? "Loading..." : "Login"}
         </button>

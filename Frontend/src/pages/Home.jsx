@@ -398,17 +398,17 @@ case "OPEN_INSTAGRAM":
             <h2 className="text-xl font-bold text-white tracking-wide">Menu</h2>
             <button 
               onClick={() => setMobileMenu(false)}
-              className="text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
+              className="text-gray-400 cursor-pointer hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
             >
               <RxCross2 size={20} />
             </button>
           </div>
 
           <div className="flex flex-col gap-3 mb-8">
-            <button onClick={() => setConfirmAction({ type: 'customize' })} className="bg-blue-600 hover:bg-blue-500 transition-colors px-4 py-2.5 rounded-xl text-white font-medium shadow-lg shadow-blue-900/20">
+            <button onClick={() => setConfirmAction({ type: 'customize' })} className="cursor-pointer bg-blue-600 hover:bg-blue-500  transition-colors px-4 py-2.5 rounded-xl text-white font-medium shadow-lg shadow-blue-900/20">
               Customize Assistant
             </button>
-            <button onClick={() => setConfirmAction({ type: 'logout' })} className="bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/10 hover:border-red-500/30 transition-all px-4 py-2.5 rounded-xl font-medium">
+            <button onClick={() => setConfirmAction({ type: 'logout' })} className="bg-white/5 cursor-pointer hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/10 hover:border-red-500/30 transition-all px-4 py-2.5 rounded-xl font-medium">
               Logout
             </button>
           </div>
@@ -416,7 +416,7 @@ case "OPEN_INSTAGRAM":
           <div className="flex-1 overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Voice History</h3>
-              <button onClick={() => setTrunk(!trunk)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+              <button onClick={() => setTrunk(!trunk)} className="text-xs cursor-pointer text-blue-400 hover:text-blue-300 transition-colors">
                 {trunk ? "Show All" : "Truncate"}
               </button>
             </div>
@@ -438,7 +438,7 @@ case "OPEN_INSTAGRAM":
                     </div>
                     <button
                       onClick={() => deleteHistory(i)}
-                      className="text-gray-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-400/10 transition-colors"
+                      className="text-gray-500 cursor-pointer hover:text-red-400 p-1.5 rounded-lg hover:bg-red-400/10 transition-colors"
                       title="Delete"
                     >
                       <RxCross1 size={16} />
@@ -470,14 +470,14 @@ case "OPEN_INSTAGRAM":
             </div>
             <button 
               onClick={() => setDesktopHistory(false)}
-              className="text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
+              className="text-gray-400 cursor-pointer hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-full"
             >
               <RxCross2 size={20} />
             </button>
           </div>
 
           <div className="flex justify-end mb-2">
-             <button onClick={() => setTrunk(!trunk)} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+             <button onClick={() => setTrunk(!trunk)} className="text-xs cursor-pointer text-blue-400 hover:text-blue-300 transition-colors">
                 {trunk ? "Show Full Text" : "Truncate Text"}
              </button>
           </div>
@@ -504,7 +504,7 @@ case "OPEN_INSTAGRAM":
                   </div>
                   <button
                     onClick={() => deleteHistory(i)}
-                    className="text-gray-500 hover:text-red-400 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-400/10"
+                    className="text-gray-500 cursor-pointer hover:text-red-400 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all p-1.5 rounded-lg hover:bg-red-400/10"
                     title="Delete record"
                   >
                     <RxCross1 size={18} />
@@ -523,11 +523,11 @@ case "OPEN_INSTAGRAM":
       {/* we use hidden to hide our button on the small display because we cannot do sm:hidden and lg:flex is use to display on the large device */}
       <div className="hidden absolute lg:flex flex-col items-center gap-4 top-4 right-6"> 
         <button onClick={() => setConfirmAction({ type: 'logout' })}
-          className="bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-gray-300 hover:text-red-400 transition-all px-6 py-2 rounded-xl text-sm font-medium w-full" >Logout
+          className="bg-white/5 cursor-pointer hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-gray-300 hover:text-red-400 transition-all px-6 py-2 rounded-xl text-sm font-medium w-full" >Logout
         </button>
         
         <button onClick={() => setConfirmAction({ type: 'customize' })}
-          className="bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20 px-6 py-2 rounded-xl text-white text-sm font-medium w-full">Customize Assistant
+          className="bg-blue-600 cursor-pointer hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20 px-6 py-2 rounded-xl text-white text-sm font-medium w-full">Customize Assistant
         </button>
       </div>
 
@@ -553,7 +553,7 @@ case "OPEN_INSTAGRAM":
             <div className="flex justify-center gap-4">
               <button 
                 onClick={() => setConfirmAction(null)} 
-                className="px-6 py-2 rounded-xl border border-white/20 text-gray-300 hover:bg-white/10 transition-colors font-medium"
+                className="px-6 py-2 cursor-pointer rounded-xl border border-white/20 text-gray-300 hover:bg-white/10 transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -566,7 +566,7 @@ case "OPEN_INSTAGRAM":
                   }
                   setConfirmAction(null);
                 }} 
-                className={`px-6 py-2 rounded-xl text-white shadow-lg transition-colors font-medium ${
+                className={`px-6 py-2 rounded-xl text-white cursor-pointer shadow-lg transition-colors font-medium ${
                   confirmAction.type === "logout" 
                     ? "bg-red-600 hover:bg-red-500 shadow-red-900/20" 
                     : "bg-blue-600 hover:bg-blue-500 shadow-blue-900/20"
